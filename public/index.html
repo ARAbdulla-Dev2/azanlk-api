@@ -4,72 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Posts Feed</title>
+    <!-- Use Inter font for a modern look and feel -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            overflow: hidden;
-            background: white;
+            font-family: 'Inter', sans-serif;
+            background: #f3f4f6;
+            margin: 0;
+            /* Flexbox layout to correctly position the navbar and posts */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Hide the main scrollbar */
         }
         
+        /* Custom styles to hide the scrollbar for all major browsers */
+        .posts-container::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+        }
         .posts-container {
-            transition: transform 0.3s ease-out;
-            touch-action: pan-y;
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
         }
-        
+
+        .posts-container {
+            /* Enable vertical scrolling and scroll snapping */
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch; /* Smoother scrolling on iOS */
+            scroll-snap-type: y mandatory; /* The magic for snapping to posts */
+            scroll-behavior: smooth; /* Smooth scroll between snaps */
+            flex: 1; /* Take up all available space */
+        }
+
         .post-wrapper {
-            height: calc(100vh - 4rem);
+            width: 100%;
+            height: 100%; /* Ensure each post fills the container height */
             position: relative;
+            scroll-snap-align: start; /* Snap each post to the top of the container */
+            flex-shrink: 0; /* Prevent posts from shrinking */
         }
-        
+
         .post-image {
             object-fit: cover;
-        }
-        
-        .swipe-indicator {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 10;
-        }
-        
-        .swipe-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            margin: 4px 0;
-            transition: all 0.3s;
-        }
-        
-        .swipe-dot.active {
-            background: #3b82f6;
-            box-shadow: 0 0 10px rgba(59,130,246,0.6);
-        }
-        
-        .swipe-dot.inactive {
-            background: rgba(0,0,0,0.3);
-        }
-
-        .like-btn {
-            transition: all 0.2s ease;
-        }
-
-        .like-btn.liked {
-            color: #ef4444;
-            transform: scale(1.1);
-        }
-
-        .like-btn:active {
-            transform: scale(0.95);
-        }
-
-        .read-more-btn {
-            color: #6b7280;
-            text-decoration: none;
-        }
-
-        .read-more-btn:hover {
-            color: #374151;
+            width: 100%;
+            height: 100%;
         }
 
         .post-overlay {
@@ -81,23 +60,76 @@
             height: 32px;
             border-radius: 50%;
             object-fit: cover;
+            border: 2px solid white; /* Add a white border to the profile pic */
+        }
+
+        .swipe-indicator {
+            position: fixed; /* Use fixed positioning to keep it in place */
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* Spacing between dots */
+        }
+
+        .swipe-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5); /* Semi-transparent white */
+            transition: all 0.3s ease;
+        }
+
+        .swipe-dot.active {
+            background: #fff;
+            transform: scale(1.2);
+            box-shadow: 0 0 8px rgba(255,255,255,0.8);
+        }
+        
+        /* Interactive element styling */
+        .like-btn, .comment-btn, .share-btn {
+            color: white;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        
+        .like-btn:hover, .comment-btn:hover, .share-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .like-btn.liked {
+            color: #ef4444; /* Red color for liked posts */
+            transform: scale(1.2);
+        }
+
+        /* Styling for the captions */
+        .read-more-btn {
+            color: #d1d5db; /* Light gray for the button text */
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .read-more-btn:hover {
+            color: #e5e7eb;
         }
     </style>
 </head>
-<body class="bg-white">
+<body>
     <!-- Navbar -->
-    <nav class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-center fixed top-0 w-full z-50">
+    <nav class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-center w-full z-50 flex-shrink-0">
         <h1 class="text-xl font-semibold text-gray-800">Posts</h1>
     </nav>
 
     <!-- Posts Container -->
-    <div class="posts-container" style="margin-top: 4rem;" id="postsContainer">
+    <div class="posts-container" id="postsContainer">
         <!-- Post 1 -->
         <div class="post-wrapper bg-gray-100 relative">
             <img 
                 class="post-image w-full h-full" 
                 src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=800&fit=crop"
-                alt="Mountain landscape">
+                alt="Mountain landscape"
+                onerror="this.src='https://placehold.co/400x800/e5e7eb/1f2937?text=Image+1'">
             <div class="post-overlay absolute inset-0"></div>
             
             <!-- Post Content -->
@@ -105,7 +137,7 @@
                 <!-- User Info -->
                 <div class="flex items-center mb-3">
                     <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" 
-                         alt="User" class="profile-pic mr-3">
+                        alt="User" class="profile-pic mr-3" onerror="this.src='https://placehold.co/100x100/e5e7eb/1f2937?text=P1'">
                     <div>
                         <p class="font-semibold text-sm">alex_explorer</p>
                         <p class="text-xs opacity-75">2 hours ago</p>
@@ -129,13 +161,13 @@
                         </svg>
                         <span class="like-count text-sm">245</span>
                     </button>
-                    <button class="flex items-center space-x-1">
+                    <button class="comment-btn flex items-center space-x-1">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                         </svg>
                         <span class="text-sm">23</span>
                     </button>
-                    <button>
+                    <button class="share-btn">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
                         </svg>
@@ -149,13 +181,14 @@
             <img 
                 class="post-image w-full h-full" 
                 src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=800&fit=crop"
-                alt="Food photography">
+                alt="Food photography"
+                onerror="this.src='https://placehold.co/400x800/e5e7eb/1f2937?text=Image+2'">
             <div class="post-overlay absolute inset-0"></div>
             
             <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
                 <div class="flex items-center mb-3">
                     <img src="https://images.unsplash.com/photo-1494790108755-2616b612e825?w=100&h=100&fit=crop&crop=face" 
-                         alt="User" class="profile-pic mr-3">
+                        alt="User" class="profile-pic mr-3" onerror="this.src='https://placehold.co/100x100/e5e7eb/1f2937?text=P2'">
                     <div>
                         <p class="font-semibold text-sm">foodie_sarah</p>
                         <p class="text-xs opacity-75">4 hours ago</p>
@@ -177,13 +210,13 @@
                         </svg>
                         <span class="like-count text-sm">189</span>
                     </button>
-                    <button class="flex items-center space-x-1">
+                    <button class="comment-btn flex items-center space-x-1">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                         </svg>
                         <span class="text-sm">17</span>
                     </button>
-                    <button>
+                    <button class="share-btn">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
                         </svg>
@@ -197,13 +230,14 @@
             <img 
                 class="post-image w-full h-full" 
                 src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=800&fit=crop"
-                alt="Nature landscape">
+                alt="Nature landscape"
+                onerror="this.src='https://placehold.co/400x800/e5e7eb/1f2937?text=Image+3'">
             <div class="post-overlay absolute inset-0"></div>
             
             <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
                 <div class="flex items-center mb-3">
                     <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" 
-                         alt="User" class="profile-pic mr-3">
+                        alt="User" class="profile-pic mr-3" onerror="this.src='https://placehold.co/100x100/e5e7eb/1f2937?text=P3'">
                     <div>
                         <p class="font-semibold text-sm">nature_mike</p>
                         <p class="text-xs opacity-75">6 hours ago</p>
@@ -225,13 +259,13 @@
                         </svg>
                         <span class="like-count text-sm">312</span>
                     </button>
-                    <button class="flex items-center space-x-1">
+                    <button class="comment-btn flex items-center space-x-1">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                         </svg>
                         <span class="text-sm">45</span>
                     </button>
-                    <button>
+                    <button class="share-btn">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
                         </svg>
@@ -245,13 +279,14 @@
             <img 
                 class="post-image w-full h-full" 
                 src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=800&fit=crop"
-                alt="City at night">
+                alt="City at night"
+                onerror="this.src='https://placehold.co/400x800/e5e7eb/1f2937?text=Image+4'">
             <div class="post-overlay absolute inset-0"></div>
             
             <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
                 <div class="flex items-center mb-3">
                     <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face" 
-                         alt="User" class="profile-pic mr-3">
+                        alt="User" class="profile-pic mr-3" onerror="this.src='https://placehold.co/100x100/e5e7eb/1f2937?text=P4'">
                     <div>
                         <p class="font-semibold text-sm">city_explorer</p>
                         <p class="text-xs opacity-75">8 hours ago</p>
@@ -273,13 +308,13 @@
                         </svg>
                         <span class="like-count text-sm">156</span>
                     </button>
-                    <button class="flex items-center space-x-1">
+                    <button class="comment-btn flex items-center space-x-1">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                         </svg>
                         <span class="text-sm">29</span>
                     </button>
-                    <button>
+                    <button class="share-btn">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
                         </svg>
@@ -293,13 +328,14 @@
             <img 
                 class="post-image w-full h-full" 
                 src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400&h=800&fit=crop"
-                alt="Ocean wave">
+                alt="Ocean wave"
+                onerror="this.src='https://placehold.co/400x800/e5e7eb/1f2937?text=Image+5'">
             <div class="post-overlay absolute inset-0"></div>
             
             <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
                 <div class="flex items-center mb-3">
                     <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face" 
-                         alt="User" class="profile-pic mr-3">
+                        alt="User" class="profile-pic mr-3" onerror="this.src='https://placehold.co/100x100/e5e7eb/1f2937?text=P5'">
                     <div>
                         <p class="font-semibold text-sm">ocean_soul</p>
                         <p class="text-xs opacity-75">12 hours ago</p>
@@ -321,13 +357,13 @@
                         </svg>
                         <span class="like-count text-sm">278</span>
                     </button>
-                    <button class="flex items-center space-x-1">
+                    <button class="comment-btn flex items-center space-x-1">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                         </svg>
                         <span class="text-sm">52</span>
                     </button>
-                    <button>
+                    <button class="share-btn">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
                         </svg>
@@ -353,12 +389,11 @@
                 this.posts = this.container.querySelectorAll('.post-wrapper');
                 this.indicators = document.querySelectorAll('.swipe-dot');
                 this.currentIndex = 0;
-                this.startY = 0;
-                this.currentY = 0;
-                this.isDragging = false;
-                this.threshold = 50;
-                this.likedPosts = new Set(); // Simple like tracking (in-memory)
-                
+                this.likedPosts = new Set();
+                this.isScrolling = false;
+                this.lastScrollTop = 0;
+
+                // Initialize the feed
                 this.init();
             }
             
@@ -368,180 +403,156 @@
             }
             
             setupEventListeners() {
-                // Touch events
-                this.container.addEventListener('touchstart', this.handleTouchStart.bind(this));
-                this.container.addEventListener('touchmove', this.handleTouchMove.bind(this));
-                this.container.addEventListener('touchend', this.handleTouchEnd.bind(this));
+                // Listen for native scroll events to update the indicators and collapse captions
+                this.container.addEventListener('scroll', this.handleScroll.bind(this));
                 
-                // Mouse events for desktop testing
-                this.container.addEventListener('mousedown', this.handleMouseDown.bind(this));
-                this.container.addEventListener('mousemove', this.handleMouseMove.bind(this));
-                this.container.addEventListener('mouseup', this.handleMouseUp.bind(this));
+                // Use a 'click' event listener on the container to delegate events
+                this.container.addEventListener('click', this.handleClick.bind(this));
                 
-                // Prevent context menu
-                this.container.addEventListener('contextmenu', e => e.preventDefault());
-                
-                // Keyboard navigation
+                // Add a click listener for images to collapse captions
+                this.posts.forEach(post => {
+                    const image = post.querySelector('.post-image');
+                    image.addEventListener('click', this.collapseAllCaptions.bind(this));
+                });
+
+                // Keyboard navigation for desktop
                 document.addEventListener('keydown', this.handleKeyDown.bind(this));
-                
-                // Like button events
-                document.addEventListener('click', this.handleLike.bind(this));
-                
-                // Read more events
-                document.addEventListener('click', this.handleReadMore.bind(this));
             }
-            
-            handleTouchStart(e) {
-                this.startY = e.touches[0].clientY;
-                this.isDragging = true;
-            }
-            
-            handleTouchMove(e) {
-                if (!this.isDragging) return;
-                
-                this.currentY = e.touches[0].clientY;
-                const deltaY = this.currentY - this.startY;
-                
-                // Add visual feedback during drag
-                this.container.style.transform = `translateY(${deltaY * 0.3}px)`;
-            }
-            
-            handleTouchEnd(e) {
-                if (!this.isDragging) return;
-                
-                const deltaY = this.currentY - this.startY;
-                
-                if (Math.abs(deltaY) > this.threshold) {
-                    if (deltaY < 0) {
-                        this.nextPost();
-                    } else {
-                        this.prevPost();
-                    }
+
+            // Handles all click events on the container
+            handleClick(e) {
+                const target = e.target;
+
+                // Handle read more button clicks
+                if (target.classList.contains('read-more-btn')) {
+                    this.handleReadMore(target);
                 }
-                
-                this.resetPosition();
-                this.isDragging = false;
-            }
-            
-            handleMouseDown(e) {
-                this.startY = e.clientY;
-                this.isDragging = true;
-                e.preventDefault();
-            }
-            
-            handleMouseMove(e) {
-                if (!this.isDragging) return;
-                
-                this.currentY = e.clientY;
-                const deltaY = this.currentY - this.startY;
-                
-                this.container.style.transform = `translateY(${deltaY * 0.3}px)`;
-            }
-            
-            handleMouseUp(e) {
-                if (!this.isDragging) return;
-                
-                const deltaY = this.currentY - this.startY;
-                
-                if (Math.abs(deltaY) > this.threshold) {
-                    if (deltaY < 0) {
-                        this.nextPost();
-                    } else {
-                        this.prevPost();
-                    }
-                }
-                
-                this.resetPosition();
-                this.isDragging = false;
-            }
-            
-            handleKeyDown(e) {
-                switch(e.key) {
-                    case 'ArrowUp':
-                        this.prevPost();
-                        break;
-                    case 'ArrowDown':
-                        this.nextPost();
-                        break;
+
+                // Handle like button clicks
+                const likeBtn = target.closest('.like-btn');
+                if (likeBtn) {
+                    this.handleLike(likeBtn);
                 }
             }
             
-            handleLike(e) {
-                if (e.target.closest('.like-btn')) {
-                    const likeBtn = e.target.closest('.like-btn');
-                    const postId = likeBtn.getAttribute('data-post');
-                    const likeCount = likeBtn.querySelector('.like-count');
-                    
-                    if (this.likedPosts.has(postId)) {
-                        // Unlike
-                        this.likedPosts.delete(postId);
-                        likeBtn.classList.remove('liked');
-                        likeCount.textContent = parseInt(likeCount.textContent) - 1;
-                    } else {
-                        // Like
-                        this.likedPosts.add(postId);
-                        likeBtn.classList.add('liked');
-                        likeCount.textContent = parseInt(likeCount.textContent) + 1;
-                    }
+            // Updates indicators and collapses captions on scroll
+            handleScroll() {
+                // Throttle scroll events to prevent performance issues
+                if (!this.isScrolling) {
+                    window.requestAnimationFrame(() => {
+                        const postHeight = this.posts[0].clientHeight;
+                        const newIndex = Math.round(this.container.scrollTop / postHeight);
+                        
+                        // Check if the scroll position has actually changed to a new post
+                        if (newIndex !== this.currentIndex) {
+                            this.currentIndex = newIndex;
+                            this.updateIndicators();
+                            this.collapseAllCaptions();
+                        }
+                        this.isScrolling = false;
+                    });
+                    this.isScrolling = true;
                 }
             }
-            
-            handleReadMore(e) {
-                if (e.target.classList.contains('read-more-btn')) {
-                    const button = e.target;
+
+            // Collapses all expanded captions across all posts
+            collapseAllCaptions() {
+                const readMoreButtons = document.querySelectorAll('.read-more-btn');
+                readMoreButtons.forEach(button => {
                     const postContent = button.closest('.post-wrapper');
                     const preview = postContent.querySelector('.caption-preview');
                     const full = postContent.querySelector('.caption-full');
                     
-                    if (full.classList.contains('hidden')) {
-                        // Show full text
-                        preview.classList.add('hidden');
-                        full.classList.remove('hidden');
-                        button.textContent = 'read less';
-                    } else {
-                        // Show preview text
+                    if (!full.classList.contains('hidden')) {
                         full.classList.add('hidden');
                         preview.classList.remove('hidden');
                         button.textContent = 'read more';
                     }
+                });
+            }
+            
+            // Toggles the 'liked' state of a post
+            handleLike(likeBtn) {
+                const postId = likeBtn.getAttribute('data-post');
+                const likeCount = likeBtn.querySelector('.like-count');
+                
+                if (this.likedPosts.has(postId)) {
+                    // Unlike
+                    this.likedPosts.delete(postId);
+                    likeBtn.classList.remove('liked');
+                    likeCount.textContent = parseInt(likeCount.textContent) - 1;
+                } else {
+                    // Like
+                    this.likedPosts.add(postId);
+                    likeBtn.classList.add('liked');
+                    likeCount.textContent = parseInt(likeCount.textContent) + 1;
                 }
             }
             
+            // Toggles between a caption preview and the full caption
+            handleReadMore(button) {
+                const postContent = button.closest('.post-wrapper');
+                const preview = postContent.querySelector('.caption-preview');
+                const full = postContent.querySelector('.caption-full');
+                
+                if (full.classList.contains('hidden')) {
+                    // Expand
+                    preview.classList.add('hidden');
+                    full.classList.remove('hidden');
+                    button.textContent = 'read less';
+                } else {
+                    // Collapse
+                    full.classList.add('hidden');
+                    preview.classList.remove('hidden');
+                    button.textContent = 'read more';
+                }
+            }
+
+            // Navigates between posts using keyboard arrows
+            handleKeyDown(e) {
+                switch(e.key) {
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        this.prevPost();
+                        break;
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        this.nextPost();
+                        break;
+                }
+            }
+            
+            // Scrolls to the next post
             nextPost() {
                 if (this.currentIndex < this.posts.length - 1) {
-                    this.currentIndex++;
-                    this.updatePost();
+                    const postHeight = this.posts[0].clientHeight;
+                    this.container.scrollTo({
+                        top: (this.currentIndex + 1) * postHeight,
+                        behavior: 'smooth'
+                    });
                 }
             }
             
+            // Scrolls to the previous post
             prevPost() {
                 if (this.currentIndex > 0) {
-                    this.currentIndex--;
-                    this.updatePost();
+                    const postHeight = this.posts[0].clientHeight;
+                    this.container.scrollTo({
+                        top: (this.currentIndex - 1) * postHeight,
+                        behavior: 'smooth'
+                    });
                 }
             }
             
-            updatePost() {
-                const offset = -this.currentIndex * window.innerHeight;
-                this.container.style.transform = `translateY(calc(${offset}px + 4rem))`;
-                this.updateIndicators();
-            }
-            
-            resetPosition() {
-                if (!this.isDragging) {
-                    const offset = -this.currentIndex * window.innerHeight;
-                    this.container.style.transform = `translateY(calc(${offset}px + 4rem))`;
-                }
-            }
-            
+            // Visually updates the swipe indicators
             updateIndicators() {
                 this.indicators.forEach((indicator, index) => {
                     if (index === this.currentIndex) {
-                        indicator.classList.remove('inactive');
                         indicator.classList.add('active');
+                        indicator.classList.remove('inactive');
                     } else {
-                        indicator.classList.remove('active');
                         indicator.classList.add('inactive');
+                        indicator.classList.remove('active');
                     }
                 });
             }
@@ -550,11 +561,6 @@
         // Initialize the posts feed when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             new PostsFeed();
-        });
-        
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            const feed = new PostsFeed();
         });
     </script>
 </body>
