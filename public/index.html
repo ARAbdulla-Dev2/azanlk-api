@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reels Player</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            overflow: hidden;
+            background: white;
+        }
+        
+        .video-container {
+            transition: transform 0.3s ease-out;
+            touch-action: pan-y;
+        }
+        
+        .video-wrapper {
+            height: calc(100vh - 4rem);
+            position: relative;
+        }
+        
+        video {
+            object-fit: cover;
+        }
+        
+        .swipe-indicator {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        
+        .swipe-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin: 4px 0;
+            transition: all 0.3s;
+        }
+        
+        .swipe-dot.active {
+            background: white;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+        }
+        
+        .swipe-dot.inactive {
+            background: rgba(255,255,255,0.4);
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-center fixed top-0 w-full z-50">
+        <h1 class="text-xl font-semibold text-gray-800">Posts</h1>
+    </nav>
+
+    <!-- Video Container -->
+    <div class="video-container" style="margin-top: 4rem;" id="videoContainer">
+        <!-- Video 1 -->
+        <div class="video-wrapper bg-gray-100 relative">
+            <video 
+                class="w-full h-full" 
+                loop 
+                muted 
+                playsinline
+                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">
+            </video>
+            <div class="absolute bottom-4 left-4 text-white">
+                <h3 class="font-semibold">Adventure Awaits</h3>
+                <p class="text-sm opacity-80">Explore the great outdoors</p>
+            </div>
+        </div>
+
+        <!-- Video 2 -->
+        <div class="video-wrapper bg-gray-100 relative">
+            <video 
+                class="w-full h-full" 
+                loop 
+                muted 
+                playsinline
+                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4">
+            </video>
+            <div class="absolute bottom-4 left-4 text-white">
+                <h3 class="font-semibold">Creative Journey</h3>
+                <p class="text-sm opacity-80">Art in motion</p>
+            </div>
+        </div>
+
+        <!-- Video 3 -->
+        <div class="video-wrapper bg-gray-100 relative">
+            <video 
+                class="w-full h-full" 
+                loop 
+                muted 
+                playsinline
+                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4">
+            </video>
+            <div class="absolute bottom-4 left-4 text-white">
+                <h3 class="font-semibold">Epic Moments</h3>
+                <p class="text-sm opacity-80">Capturing life's highlights</p>
+            </div>
+        </div>
+
+        <!-- Video 4 -->
+        <div class="video-wrapper bg-gray-100 relative">
+            <video 
+                class="w-full h-full" 
+                loop 
+                muted 
+                playsinline
+                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4">
+            </video>
+            <div class="absolute bottom-4 left-4 text-white">
+                <h3 class="font-semibold">Great Escapes</h3>
+                <p class="text-sm opacity-80">Find your freedom</p>
+            </div>
+        </div>
+
+        <!-- Video 5 -->
+        <div class="video-wrapper bg-gray-100 relative">
+            <video 
+                class="w-full h-full" 
+                loop 
+                muted 
+                playsinline
+                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4">
+            </video>
+            <div class="absolute bottom-4 left-4 text-white">
+                <h3 class="font-semibold">Inspiring Stories</h3>
+                <p class="text-sm opacity-80">Tales that move us</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Swipe Indicators -->
+    <div class="swipe-indicator">
+        <div class="swipe-dot active"></div>
+        <div class="swipe-dot inactive"></div>
+        <div class="swipe-dot inactive"></div>
+        <div class="swipe-dot inactive"></div>
+        <div class="swipe-dot inactive"></div>
+    </div>
+
+    <script>
+        class ReelsPlayer {
+            constructor() {
+                this.container = document.getElementById('videoContainer');
+                this.videos = this.container.querySelectorAll('video');
+                this.indicators = document.querySelectorAll('.swipe-dot');
+                this.currentIndex = 0;
+                this.startY = 0;
+                this.currentY = 0;
+                this.isDragging = false;
+                this.threshold = 50;
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.playCurrentVideo();
+                this.updateIndicators();
+            }
+            
+            setupEventListeners() {
+                // Touch events
+                this.container.addEventListener('touchstart', this.handleTouchStart.bind(this));
+                this.container.addEventListener('touchmove', this.handleTouchMove.bind(this));
+                this.container.addEventListener('touchend', this.handleTouchEnd.bind(this));
+                
+                // Mouse events for desktop testing
+                this.container.addEventListener('mousedown', this.handleMouseDown.bind(this));
+                this.container.addEventListener('mousemove', this.handleMouseMove.bind(this));
+                this.container.addEventListener('mouseup', this.handleMouseUp.bind(this));
+                
+                // Prevent context menu
+                this.container.addEventListener('contextmenu', e => e.preventDefault());
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', this.handleKeyDown.bind(this));
+            }
+            
+            handleTouchStart(e) {
+                this.startY = e.touches[0].clientY;
+                this.isDragging = true;
+            }
+            
+            handleTouchMove(e) {
+                if (!this.isDragging) return;
+                
+                this.currentY = e.touches[0].clientY;
+                const deltaY = this.currentY - this.startY;
+                
+                // Add visual feedback during drag
+                this.container.style.transform = `translateY(${deltaY * 0.3}px)`;
+            }
+            
+            handleTouchEnd(e) {
+                if (!this.isDragging) return;
+                
+                const deltaY = this.currentY - this.startY;
+                
+                if (Math.abs(deltaY) > this.threshold) {
+                    if (deltaY < 0) {
+                        this.nextVideo();
+                    } else {
+                        this.prevVideo();
+                    }
+                }
+                
+                this.resetPosition();
+                this.isDragging = false;
+            }
+            
+            handleMouseDown(e) {
+                this.startY = e.clientY;
+                this.isDragging = true;
+                e.preventDefault();
+            }
+            
+            handleMouseMove(e) {
+                if (!this.isDragging) return;
+                
+                this.currentY = e.clientY;
+                const deltaY = this.currentY - this.startY;
+                
+                this.container.style.transform = `translateY(${deltaY * 0.3}px)`;
+            }
+            
+            handleMouseUp(e) {
+                if (!this.isDragging) return;
+                
+                const deltaY = this.currentY - this.startY;
+                
+                if (Math.abs(deltaY) > this.threshold) {
+                    if (deltaY < 0) {
+                        this.nextVideo();
+                    } else {
+                        this.prevVideo();
+                    }
+                }
+                
+                this.resetPosition();
+                this.isDragging = false;
+            }
+            
+            handleKeyDown(e) {
+                switch(e.key) {
+                    case 'ArrowUp':
+                        this.prevVideo();
+                        break;
+                    case 'ArrowDown':
+                        this.nextVideo();
+                        break;
+                }
+            }
+            
+            nextVideo() {
+                if (this.currentIndex < this.videos.length - 1) {
+                    this.currentIndex++;
+                    this.updateVideo();
+                }
+            }
+            
+            prevVideo() {
+                if (this.currentIndex > 0) {
+                    this.currentIndex--;
+                    this.updateVideo();
+                }
+            }
+            
+            updateVideo() {
+                const offset = -this.currentIndex * window.innerHeight;
+                this.container.style.transform = `translateY(calc(${offset}px + 4rem))`;
+                
+                this.pauseAllVideos();
+                this.playCurrentVideo();
+                this.updateIndicators();
+            }
+            
+            resetPosition() {
+                if (!this.isDragging) {
+                    const offset = -this.currentIndex * window.innerHeight;
+                    this.container.style.transform = `translateY(calc(${offset}px + 4rem))`;
+                }
+            }
+            
+            playCurrentVideo() {
+                const currentVideo = this.videos[this.currentIndex];
+                if (currentVideo) {
+                    currentVideo.currentTime = 0;
+                    currentVideo.play().catch(e => {
+                        console.log('Auto-play prevented:', e);
+                        // Show play button or handle auto-play restriction
+                    });
+                }
+            }
+            
+            pauseAllVideos() {
+                this.videos.forEach(video => {
+                    video.pause();
+                });
+            }
+            
+            updateIndicators() {
+                this.indicators.forEach((indicator, index) => {
+                    if (index === this.currentIndex) {
+                        indicator.classList.remove('inactive');
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                        indicator.classList.add('inactive');
+                    }
+                });
+            }
+        }
+        
+        // Initialize the reels player when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new ReelsPlayer();
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const player = new ReelsPlayer();
+        });
+    </script>
+</body>
+</html>

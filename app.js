@@ -39,6 +39,8 @@ function getCoordinatesByCity(city) {
   return entry ? { city: entry[0], coords: entry[1] } : null;
 }
 
+app.use(express.static('public'));
+
 app.get('/api/prayerTimes', async (req, res) => {
   const { latitude, longitude, date, city } = req.query;
   const targetDate = date || new Date().toISOString().split('T')[0].split('-').reverse().join('-');
