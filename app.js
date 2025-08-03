@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3033;
 
 const hardcodedCities = JSON.parse(fs.readFileSync(path.join(__dirname, 'data.json'), 'utf-8'));
 
