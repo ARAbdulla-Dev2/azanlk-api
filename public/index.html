@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reels Player</title>
+    <title>Image Posts Feed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -11,17 +11,17 @@
             background: white;
         }
         
-        .video-container {
+        .posts-container {
             transition: transform 0.3s ease-out;
             touch-action: pan-y;
         }
         
-        .video-wrapper {
+        .post-wrapper {
             height: calc(100vh - 4rem);
             position: relative;
         }
         
-        video {
+        .post-image {
             object-fit: cover;
         }
         
@@ -42,12 +42,45 @@
         }
         
         .swipe-dot.active {
-            background: white;
-            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+            background: #3b82f6;
+            box-shadow: 0 0 10px rgba(59,130,246,0.6);
         }
         
         .swipe-dot.inactive {
-            background: rgba(255,255,255,0.4);
+            background: rgba(0,0,0,0.3);
+        }
+
+        .like-btn {
+            transition: all 0.2s ease;
+        }
+
+        .like-btn.liked {
+            color: #ef4444;
+            transform: scale(1.1);
+        }
+
+        .like-btn:active {
+            transform: scale(0.95);
+        }
+
+        .read-more-btn {
+            color: #6b7280;
+            text-decoration: none;
+        }
+
+        .read-more-btn:hover {
+            color: #374151;
+        }
+
+        .post-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+        }
+
+        .profile-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
         }
     </style>
 </head>
@@ -57,80 +90,249 @@
         <h1 class="text-xl font-semibold text-gray-800">Posts</h1>
     </nav>
 
-    <!-- Video Container -->
-    <div class="video-container" style="margin-top: 4rem;" id="videoContainer">
-        <!-- Video 1 -->
-        <div class="video-wrapper bg-gray-100 relative">
-            <video 
-                class="w-full h-full" 
-                loop 
-                muted 
-                playsinline
-                src="https://www.w3schools.com/html/mov_bbb.mp4">
-            </video>
-            <div class="absolute bottom-4 left-4 text-white">
-                <h3 class="font-semibold">Adventure Awaits</h3>
-                <p class="text-sm opacity-80">Explore the great outdoors</p>
+    <!-- Posts Container -->
+    <div class="posts-container" style="margin-top: 4rem;" id="postsContainer">
+        <!-- Post 1 -->
+        <div class="post-wrapper bg-gray-100 relative">
+            <img 
+                class="post-image w-full h-full" 
+                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=800&fit=crop"
+                alt="Mountain landscape">
+            <div class="post-overlay absolute inset-0"></div>
+            
+            <!-- Post Content -->
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+                <!-- User Info -->
+                <div class="flex items-center mb-3">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" 
+                         alt="User" class="profile-pic mr-3">
+                    <div>
+                        <p class="font-semibold text-sm">alex_explorer</p>
+                        <p class="text-xs opacity-75">2 hours ago</p>
+                    </div>
+                </div>
+                
+                <!-- Caption -->
+                <div class="mb-3">
+                    <p class="text-sm leading-relaxed">
+                        <span class="caption-preview">Lost in the beauty of nature 🏔️ There's something magical about standing on top of a mountain...</span>
+                        <span class="caption-full hidden">Lost in the beauty of nature 🏔️ There's something magical about standing on top of a mountain and looking down at the world below. Every step of the climb was worth this breathtaking view. The crisp mountain air, the silence broken only by the wind, and the feeling of being so small yet so connected to something greater. This is why I chase these moments. Adventure isn't just about the destination, it's about the journey and the memories we create along the way. #mountains #adventure #nature #hiking #explore</span>
+                        <button class="read-more-btn ml-1 font-medium">read more</button>
+                    </p>
+                </div>
+                
+                <!-- Actions -->
+                <div class="flex items-center space-x-4">
+                    <button class="like-btn flex items-center space-x-1" data-post="1">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        <span class="like-count text-sm">245</span>
+                    </button>
+                    <button class="flex items-center space-x-1">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                        <span class="text-sm">23</span>
+                    </button>
+                    <button>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Video 2 -->
-        <div class="video-wrapper bg-gray-100 relative">
-            <video 
-                class="w-full h-full" 
-                loop 
-                muted 
-                playsinline
-                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4">
-            </video>
-            <div class="absolute bottom-4 left-4 text-white">
-                <h3 class="font-semibold">Creative Journey</h3>
-                <p class="text-sm opacity-80">Art in motion</p>
+        <!-- Post 2 -->
+        <div class="post-wrapper bg-gray-100 relative">
+            <img 
+                class="post-image w-full h-full" 
+                src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=800&fit=crop"
+                alt="Food photography">
+            <div class="post-overlay absolute inset-0"></div>
+            
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+                <div class="flex items-center mb-3">
+                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612e825?w=100&h=100&fit=crop&crop=face" 
+                         alt="User" class="profile-pic mr-3">
+                    <div>
+                        <p class="font-semibold text-sm">foodie_sarah</p>
+                        <p class="text-xs opacity-75">4 hours ago</p>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <p class="text-sm leading-relaxed">
+                        <span class="caption-preview">Sunday brunch vibes ✨ Nothing beats a perfectly crafted meal with friends...</span>
+                        <span class="caption-full hidden">Sunday brunch vibes ✨ Nothing beats a perfectly crafted meal with friends. This avocado toast with poached eggs and a drizzle of truffle oil has officially ruined all other brunches for me. The cafe's attention to detail is incredible - from the artisanal bread to the perfectly runny yolk. Plus, the company makes everything taste better! Already planning our next foodie adventure. Who else thinks food tastes better when it's pretty? #brunch #foodie #avocadotoast #sundayvibes #friends</span>
+                        <button class="read-more-btn ml-1 font-medium">read more</button>
+                    </p>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="like-btn flex items-center space-x-1" data-post="2">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        <span class="like-count text-sm">189</span>
+                    </button>
+                    <button class="flex items-center space-x-1">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                        <span class="text-sm">17</span>
+                    </button>
+                    <button>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Video 3 -->
-        <div class="video-wrapper bg-gray-100 relative">
-            <video 
-                class="w-full h-full" 
-                loop 
-                muted 
-                playsinline
-                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4">
-            </video>
-            <div class="absolute bottom-4 left-4 text-white">
-                <h3 class="font-semibold">Epic Moments</h3>
-                <p class="text-sm opacity-80">Capturing life's highlights</p>
+        <!-- Post 3 -->
+        <div class="post-wrapper bg-gray-100 relative">
+            <img 
+                class="post-image w-full h-full" 
+                src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=800&fit=crop"
+                alt="Nature landscape">
+            <div class="post-overlay absolute inset-0"></div>
+            
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+                <div class="flex items-center mb-3">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" 
+                         alt="User" class="profile-pic mr-3">
+                    <div>
+                        <p class="font-semibold text-sm">nature_mike</p>
+                        <p class="text-xs opacity-75">6 hours ago</p>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <p class="text-sm leading-relaxed">
+                        <span class="caption-preview">Golden hour magic 🌅 Caught this incredible sunset at the lake yesterday...</span>
+                        <span class="caption-full hidden">Golden hour magic 🌅 Caught this incredible sunset at the lake yesterday and had to share. Sometimes you just need to put the phone down and soak in these moments, but this one was too beautiful not to capture. The way the light reflected off the water and painted the entire sky in these warm hues... nature really is the best artist. Feeling grateful for these peaceful moments and reminder to slow down. Hope this brings some calm to your scroll today. #sunset #goldenhour #lake #nature #peaceful #gratitude #reflection</span>
+                        <button class="read-more-btn ml-1 font-medium">read more</button>
+                    </p>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="like-btn flex items-center space-x-1" data-post="3">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        <span class="like-count text-sm">312</span>
+                    </button>
+                    <button class="flex items-center space-x-1">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                        <span class="text-sm">45</span>
+                    </button>
+                    <button>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Video 4 -->
-        <div class="video-wrapper bg-gray-100 relative">
-            <video 
-                class="w-full h-full" 
-                loop 
-                muted 
-                playsinline
-                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4">
-            </video>
-            <div class="absolute bottom-4 left-4 text-white">
-                <h3 class="font-semibold">Great Escapes</h3>
-                <p class="text-sm opacity-80">Find your freedom</p>
+        <!-- Post 4 -->
+        <div class="post-wrapper bg-gray-100 relative">
+            <img 
+                class="post-image w-full h-full" 
+                src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=800&fit=crop"
+                alt="City at night">
+            <div class="post-overlay absolute inset-0"></div>
+            
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+                <div class="flex items-center mb-3">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face" 
+                         alt="User" class="profile-pic mr-3">
+                    <div>
+                        <p class="font-semibold text-sm">city_explorer</p>
+                        <p class="text-xs opacity-75">8 hours ago</p>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <p class="text-sm leading-relaxed">
+                        <span class="caption-preview">City lights and late night thoughts 🌃 There's something about the urban energy...</span>
+                        <span class="caption-full hidden">City lights and late night thoughts 🌃 There's something about the urban energy that just hits different after midnight. Walking through these empty streets, watching the city sleep while a few windows still glow with life. Each light tells a story - someone working late, someone can't sleep, someone just getting home. The city never truly sleeps, it just takes a breather. Love these quiet moments between the chaos, when you can actually hear your own thoughts over the usual hustle. #citylife #nightwalk #urbanthoughts #lights #solitude #streetphotography</span>
+                        <button class="read-more-btn ml-1 font-medium">read more</button>
+                    </p>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="like-btn flex items-center space-x-1" data-post="4">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        <span class="like-count text-sm">156</span>
+                    </button>
+                    <button class="flex items-center space-x-1">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                        <span class="text-sm">29</span>
+                    </button>
+                    <button>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Video 5 -->
-        <div class="video-wrapper bg-gray-100 relative">
-            <video 
-                class="w-full h-full" 
-                loop 
-                muted 
-                playsinline
-                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4">
-            </video>
-            <div class="absolute bottom-4 left-4 text-white">
-                <h3 class="font-semibold">Inspiring Stories</h3>
-                <p class="text-sm opacity-80">Tales that move us</p>
+        <!-- Post 5 -->
+        <div class="post-wrapper bg-gray-100 relative">
+            <img 
+                class="post-image w-full h-full" 
+                src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400&h=800&fit=crop"
+                alt="Ocean wave">
+            <div class="post-overlay absolute inset-0"></div>
+            
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+                <div class="flex items-center mb-3">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face" 
+                         alt="User" class="profile-pic mr-3">
+                    <div>
+                        <p class="font-semibold text-sm">ocean_soul</p>
+                        <p class="text-xs opacity-75">12 hours ago</p>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <p class="text-sm leading-relaxed">
+                        <span class="caption-preview">Ocean therapy in session 🌊 Nothing clears the mind like the sound of waves...</span>
+                        <span class="caption-full hidden">Ocean therapy in session 🌊 Nothing clears the mind like the sound of waves crashing against the shore. Been feeling overwhelmed lately, so I came here to reset. There's something about the ocean's rhythm that puts everything in perspective. The waves don't stop, they just keep coming, and somehow that's comforting. Reminded me that life has its ups and downs, but it keeps flowing. Grateful for this peaceful corner of the world and the healing power of salt air. Already feeling more centered. #ocean #therapy #waves #mindfulness #reset #grateful #beachlife #mentalhealth</span>
+                        <button class="read-more-btn ml-1 font-medium">read more</button>
+                    </p>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="like-btn flex items-center space-x-1" data-post="5">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        <span class="like-count text-sm">278</span>
+                    </button>
+                    <button class="flex items-center space-x-1">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                        <span class="text-sm">52</span>
+                    </button>
+                    <button>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -145,23 +347,23 @@
     </div>
 
     <script>
-        class ReelsPlayer {
+        class PostsFeed {
             constructor() {
-                this.container = document.getElementById('videoContainer');
-                this.videos = this.container.querySelectorAll('video');
+                this.container = document.getElementById('postsContainer');
+                this.posts = this.container.querySelectorAll('.post-wrapper');
                 this.indicators = document.querySelectorAll('.swipe-dot');
                 this.currentIndex = 0;
                 this.startY = 0;
                 this.currentY = 0;
                 this.isDragging = false;
                 this.threshold = 50;
+                this.likedPosts = new Set(); // Simple like tracking (in-memory)
                 
                 this.init();
             }
             
             init() {
                 this.setupEventListeners();
-                this.playCurrentVideo();
                 this.updateIndicators();
             }
             
@@ -181,6 +383,12 @@
                 
                 // Keyboard navigation
                 document.addEventListener('keydown', this.handleKeyDown.bind(this));
+                
+                // Like button events
+                document.addEventListener('click', this.handleLike.bind(this));
+                
+                // Read more events
+                document.addEventListener('click', this.handleReadMore.bind(this));
             }
             
             handleTouchStart(e) {
@@ -205,9 +413,9 @@
                 
                 if (Math.abs(deltaY) > this.threshold) {
                     if (deltaY < 0) {
-                        this.nextVideo();
+                        this.nextPost();
                     } else {
-                        this.prevVideo();
+                        this.prevPost();
                     }
                 }
                 
@@ -237,9 +445,9 @@
                 
                 if (Math.abs(deltaY) > this.threshold) {
                     if (deltaY < 0) {
-                        this.nextVideo();
+                        this.nextPost();
                     } else {
-                        this.prevVideo();
+                        this.prevPost();
                     }
                 }
                 
@@ -250,34 +458,72 @@
             handleKeyDown(e) {
                 switch(e.key) {
                     case 'ArrowUp':
-                        this.prevVideo();
+                        this.prevPost();
                         break;
                     case 'ArrowDown':
-                        this.nextVideo();
+                        this.nextPost();
                         break;
                 }
             }
             
-            nextVideo() {
-                if (this.currentIndex < this.videos.length - 1) {
-                    this.currentIndex++;
-                    this.updateVideo();
+            handleLike(e) {
+                if (e.target.closest('.like-btn')) {
+                    const likeBtn = e.target.closest('.like-btn');
+                    const postId = likeBtn.getAttribute('data-post');
+                    const likeCount = likeBtn.querySelector('.like-count');
+                    
+                    if (this.likedPosts.has(postId)) {
+                        // Unlike
+                        this.likedPosts.delete(postId);
+                        likeBtn.classList.remove('liked');
+                        likeCount.textContent = parseInt(likeCount.textContent) - 1;
+                    } else {
+                        // Like
+                        this.likedPosts.add(postId);
+                        likeBtn.classList.add('liked');
+                        likeCount.textContent = parseInt(likeCount.textContent) + 1;
+                    }
                 }
             }
             
-            prevVideo() {
+            handleReadMore(e) {
+                if (e.target.classList.contains('read-more-btn')) {
+                    const button = e.target;
+                    const postContent = button.closest('.post-wrapper');
+                    const preview = postContent.querySelector('.caption-preview');
+                    const full = postContent.querySelector('.caption-full');
+                    
+                    if (full.classList.contains('hidden')) {
+                        // Show full text
+                        preview.classList.add('hidden');
+                        full.classList.remove('hidden');
+                        button.textContent = 'read less';
+                    } else {
+                        // Show preview text
+                        full.classList.add('hidden');
+                        preview.classList.remove('hidden');
+                        button.textContent = 'read more';
+                    }
+                }
+            }
+            
+            nextPost() {
+                if (this.currentIndex < this.posts.length - 1) {
+                    this.currentIndex++;
+                    this.updatePost();
+                }
+            }
+            
+            prevPost() {
                 if (this.currentIndex > 0) {
                     this.currentIndex--;
-                    this.updateVideo();
+                    this.updatePost();
                 }
             }
             
-            updateVideo() {
+            updatePost() {
                 const offset = -this.currentIndex * window.innerHeight;
                 this.container.style.transform = `translateY(calc(${offset}px + 4rem))`;
-                
-                this.pauseAllVideos();
-                this.playCurrentVideo();
                 this.updateIndicators();
             }
             
@@ -286,23 +532,6 @@
                     const offset = -this.currentIndex * window.innerHeight;
                     this.container.style.transform = `translateY(calc(${offset}px + 4rem))`;
                 }
-            }
-            
-            playCurrentVideo() {
-                const currentVideo = this.videos[this.currentIndex];
-                if (currentVideo) {
-                    currentVideo.currentTime = 0;
-                    currentVideo.play().catch(e => {
-                        console.log('Auto-play prevented:', e);
-                        // Show play button or handle auto-play restriction
-                    });
-                }
-            }
-            
-            pauseAllVideos() {
-                this.videos.forEach(video => {
-                    video.pause();
-                });
             }
             
             updateIndicators() {
@@ -318,14 +547,14 @@
             }
         }
         
-        // Initialize the reels player when the page loads
+        // Initialize the posts feed when the page loads
         document.addEventListener('DOMContentLoaded', () => {
-            new ReelsPlayer();
+            new PostsFeed();
         });
         
         // Handle window resize
         window.addEventListener('resize', () => {
-            const player = new ReelsPlayer();
+            const feed = new PostsFeed();
         });
     </script>
 </body>
